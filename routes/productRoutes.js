@@ -1,5 +1,6 @@
 const express = require('express');
 const productController = require("../controllers/productController");
+const path = require('path'); // ✅ Added import
 
 const router = express.Router();
 
