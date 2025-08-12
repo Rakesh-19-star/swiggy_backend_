@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema({
         type: String
     },
     bestSeller: {
-        type: Boolean
+        type: String
     },
     description: {
         type: String

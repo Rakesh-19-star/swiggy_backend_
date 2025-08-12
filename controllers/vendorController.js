@@ -28,6 +28,7 @@ const vendorRegister = async(req, res) => {
         res.status(201).json({ message: "Vendor registered successfully" });
         console.log('registered')
 
+        
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal server error" })
@@ -67,7 +68,7 @@ const getAllVendors = async(req, res) => {
 
 
 const getVendorById = async(req, res) => {
-    const vendorId = req.params.apple;
+    const vendorId = req.params.vendorId;
 
     try {
         const vendor = await Vendor.findById(vendorId).populate('firm');

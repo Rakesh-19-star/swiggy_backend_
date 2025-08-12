@@ -13,7 +13,12 @@ const app = express()
 const PORT = process.env.PORT || 4000;
 
 dotEnv.config();
-app.use(cors())
+// 🔹 CHANGED: Set CORS to allow all origins for testing on Render
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("MongoDB connected successfully!"))
@@ -23,7 +28,7 @@ app.use(bodyParser.json());
 app.use('/vendor', vendorRoutes);
 app.use('/firm', firmRoutes)
 app.use('/product', productRoutes);
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(PORT, () => {
     console.log(`server started and running at ${PORT}`);

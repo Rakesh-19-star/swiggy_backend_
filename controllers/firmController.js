@@ -23,7 +23,7 @@ const addFirm = async(req, res) => {
 
         const vendor = await Vendor.findById(req.vendorId);
         if (!vendor) {
-            return res.status(404).json({ message: "Vendor not found" })
+            res.status(404).json({ message: "Vendor not found" })
         }
 
         if (vendor.firm.length > 0) {
@@ -60,26 +60,19 @@ const addFirm = async(req, res) => {
     }
 }
 
-const deleteFirmById = async (req, res) => {
+const deleteFirmById = async(req, res) => {
     try {
         const firmId = req.params.firmId;
 
-        const firm = await Firm.findByIdAndDelete(firmId);
+        const deletedProduct = await Firm.findByIdAndDelete(firmId);
 
-        if (!firm) {
-            return res.status(404).json({ message: 'Firm not found' });
+        if (!deletedProduct) {
+            return res.status(404).json({ error: "No product found" })
         }
-
-        // Dissociate vendors from the deleted firm
-        await Vendor.updateMany(
-            { firmId: firmId },
-            { $unset: { firmId: "" } }
-        );
-
-        res.status(200).json({ message: 'Firm deleted and vendors updated' });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" })
     }
-};
+}
 
 module.exports = { addFirm: [upload.single('image'), addFirm], deleteFirmById }

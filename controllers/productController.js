@@ -5,11 +5,11 @@ const path = require('path');
 
 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'uploads/'); // Destination folder where the uploaded images will be stored
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '..', 'uploads')); // 🔹 CHANGED: Ensure correct path
     },
-    filename: function(req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)); // Generating a unique filename
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname));
     }
 });
 
@@ -18,7 +18,7 @@ const upload = multer({ storage: storage });
 const addProduct = async(req, res) => {
     try {
         const { productName, price, category, bestSeller, description } = req.body;
-        const image = req.file ? req.file.filename : undefined;
+         const image = req.file ? req.file.filename : undefined; // 🔹 Multer handles image
 
         const firmId = req.params.firmId;
         const firm = await Firm.findById(firmId);
@@ -70,28 +70,20 @@ const getProductByFirm = async(req, res) => {
     }
 }
 
-const deleteProductById = async (req, res) => {
+const deleteProductById = async(req, res) => {
     try {
         const productId = req.params.productId;
 
-        // Find the product to get the firmId
-        const product = await Product.findById(productId);
-        if (!product) return res.status(404).json({ message: 'Product not found' });
+        const deletedProduct = await Product.findByIdAndDelete(productId);
 
-        const firmId = product.firmId;
-
-        // Delete the product
-        await Product.findByIdAndDelete(productId);
-
-        // Update the firm to remove the product reference
-        await Firm.findByIdAndUpdate(firmId, {
-            $pull: { products: productId } // assuming products is an array of ObjectIds
-        });
-
-        res.status(200).json({ message: 'Product deleted and firm updated' });
+        if (!deletedProduct) {
+            return res.status(404).json({ error: "No product found" })
+        }
+        res.status(200).json({ message: "Product deleted successfully" });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" })
     }
-};
+}
 
 module.exports = { addProduct: [upload.single('image'), addProduct], getProductByFirm, deleteProductById };
