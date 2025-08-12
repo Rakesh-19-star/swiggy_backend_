@@ -17,9 +17,8 @@ dotEnv.config();
 app.use(cors({
     origin: "*",
     methods: ["GET", "POST", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization","token"]//added token to match backend
+    allowedHeaders: ["Content-Type", "Authorization","token"]
 }));
-app.options("*", cors());
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("MongoDB connected successfully!"))
@@ -29,7 +28,7 @@ app.use(bodyParser.json());
 app.use('/vendor', vendorRoutes);
 app.use('/firm', firmRoutes)
 app.use('/product', productRoutes);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static('uploads'));
 
 app.listen(PORT, () => {
     console.log(`server started and running at ${PORT}`);
