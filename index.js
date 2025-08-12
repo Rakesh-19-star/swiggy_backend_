@@ -17,8 +17,9 @@ dotEnv.config();
 app.use(cors({
     origin: "*",
     methods: ["GET", "POST", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization","token"]//added token to match backend
 }));
+app.options("*", cors());
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("MongoDB connected successfully!"))
